@@ -8,7 +8,7 @@ I try with 3 different machine learning techniques:
 
 I'm using as feature vector 100 discrete points get from each waveform (only a part of the inspiral phase and the ringdown phase) as it is visible in the following image:
 
-
+![alt text](https://github.com/ASantosMorales/Best_algorithm_for_my_thesis/blob/master/feature_vectors.png)
 
 This was achieved in other script
 
