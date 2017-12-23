@@ -4,6 +4,18 @@
 Created on Fri Dec 22 12:58:40 2017
 
 @author: a_santos
+
+In this script I try to determinate the best machine learning technique
+to achive a good mass ratio estimation from gravitational waves from the
+Georgia Tech catalog.
+
+It is necessary to import data preprocessed availables in this repository
+*x.npy
+*mass_ratio-npy
+
+As result I found that the bes technique is to use a neural network with a
+hidden layer with 25 neurons with sigmoidal activation (tanh)
+
 """
 
 import numpy as np
@@ -18,9 +30,8 @@ from sklearn.svm import SVR
 from sklearn.metrics import mean_squared_error
 
 #%% Load data
-x = np.load('/home/a_santos/Documents/Research/Georgia_Tech_Catalog/scripts/Processed_data/x.npy')
-q = np.load('/home/a_santos/Documents/Research/Georgia_Tech_Catalog/scripts/Processed_data/mass_ratio.npy')
-indexes = np.load('/home/a_santos/Documents/Research/Georgia_Tech_Catalog/scripts/Processed_data/indexes.npy')
+x = np.load('/home/user/.../x.npy')
+q = np.load('/home/user/.../mass_ratio.npy')
 
 #%% Data preprocessing
 # Concatenate to shuffle the data
@@ -29,10 +40,10 @@ data = np.hstack((x.reshape(385, 100), q.reshape(385, 1)))
 # Data shuffling
 np.random.shuffle(data)
 
-# Spliting data     
+# Spliting data in two subsets, training = 70% of data  and testing = 30% of data    
 data_train, data_test = train_test_split(data, test_size=0.3)
 
-# Rearrangement
+# Rearrangement (to present the data to the functions)
 x_train = data_train[:, 0:100]
 q_train = data_train[:, 100]
 
@@ -57,7 +68,7 @@ for k in range(trials):
         j = j + 1
         del(MLP)
             
-#%% Plotting of the MSE of each running
+# Plotting of the MSE of each running
 plt.boxplot(mse.T, labels = ['5', '10', '15', 
                              '20', '25', '30', 
                              '35', '40', '45', 
@@ -72,7 +83,7 @@ plt.grid(True)
 
 # The best architecture was the one with 25 neurons
 
-#%% MLP testing
+#%% MLP testing with the best architecture
 trials = 10
 neurons = 5
 mse = []
@@ -86,7 +97,8 @@ for i in range(trials):
     del(MLP)
 
 #%%*************************************************************************** 
-# kNN
+# kNN. The metric and the neighbors will be varying to determinate the best
+# configuration
 metrics = np.array([1, 2, 5])
 neighbors = np.array([3, 5, 7, 9])
 
@@ -109,7 +121,7 @@ for k in metrics:
     
 # The best performance was that with p = 5 and neighbors = 3
 
-#%% kNN testing
+#%% kNN testing with the best parameters
 kNN = KNeighborsRegressor(n_neighbors = 3, p = 5)
 kNN.fit(x_train, q_train)
 q_test_out = np.zeros([len(q_test), 1])
@@ -119,7 +131,8 @@ mse = mean_squared_error(q_test, q_test_out)
 del(kNN)
 
 #%%*************************************************************************** 
-# SVM regression
+# SVM regression. The C parameter will be varying to determinate the best
+# configuration
 
 C = np.array([0.1, 0.5, 1., 5., 10., 100.])
 mse = []
@@ -134,7 +147,7 @@ for i in C:
 
 # The best performance was that with C = 10
 
-#%% SVM testing
+#%% SVM testing with the best configuration
 SVM_reg = SVR(C = 10, kernel = 'linear')
 SVM_reg.fit(x_train, q_train)
 q_test_out = SVM_reg.predict(x_test)
