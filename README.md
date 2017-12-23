@@ -6,4 +6,10 @@ I try with 3 different machine learning techniques:
 -kNN_regression
 -SVM_regression
 
+I'm using as feature vector 100 discrete points get from each waveform (only a part of the inspiral phase and the ringdown phase) as it is visible in the following image:
+
+
+
+This was achieved in other script
+
 After a systematic evaluation, I found that the best technique for my thesis is a Neural_network with one hidden layer with 25 neurons with sigmoidal activation function.
